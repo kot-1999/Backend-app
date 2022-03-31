@@ -1,0 +1,7 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: 'goodrequestcom/internship_postgres:latest'
+    ports:
+      - "25432:5432"
