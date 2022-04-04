@@ -1,8 +1,8 @@
 [
   {
     "id": 0,
-    "firstName": "AAA",
-    "lastName": "CCC",
+    "firstName": "Alex",
+    "lastName": "Door",
     "birthdate": "1959-04-19T10:17:52.114Z",
     "weight": 23,
     "height": 86689308,
@@ -12,8 +12,8 @@
   },
   {
     "id": 1,
-    "firstName": "BBB",
-    "lastName": "BBB",
+    "firstName": "Sandra",
+    "lastName": "Parks",
     "birthdate": "1989-04-19T10:17:52.114Z",
     "weight": 142,
     "height": 86689308,
@@ -23,8 +23,8 @@
   },
   {
     "id": 3,
-    "firstName": "CCC",
-    "lastName": "AAA",
+    "firstName": "Oleksandr",
+    "lastName": "Parks",
     "birthdate": "1979-04-19T10:17:52.114Z",
     "weight": 124,
     "height": 86689308,

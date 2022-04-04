@@ -17,6 +17,6 @@ export default () => {
   router.post('/', requestBodyValidationMiddleware(), PostPatients.workflow)
   router.delete('/:patientID', patientIdValidationMiddleware(), DeletePatients.workflow)
   router.get('/:patientID', patientIdValidationMiddleware(), GetPatients.workflow2);
-  router.patch('/:patientID', patientIdValidationMiddleware(), PatchPatients.workflow);
+  router.patch('/:patientID', patientIdValidationMiddleware(), requestBodyValidationMiddleware(), PatchPatients.workflow);
   return router;
 }

@@ -7,16 +7,17 @@ export const workflow = (req: Request, res: Response) => {
   * res: 200 if everything is ok
   * res: 204 if there is no such patient for updating
   * */
-  let patients: [{
-    id: number
-  }] = JSON.parse(fs.readFileSync('./src/api/v1/patients/patients.json'))
+  let patients: [any] = JSON.parse(fs.readFileSync('./src/api/v1/patients/patients.json'))
 
   const patientID: number = parseInt(req.params.patientID)
 
   for(let i:number = 0; i < patients.length; i++){
     if(patientID == patients[i].id){
-      req.body.id = patientID
-      patients[i] = req.body
+
+      for (let key in req.body) {
+        patients[i][key] = req.body[key];
+      }
+
       fs.writeFileSync('./src/api/v1/patients/patients.json', JSON.stringify(patients))
       res.json({
         "status": 200,
