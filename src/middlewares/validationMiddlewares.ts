@@ -1,11 +1,8 @@
 import {Request, Response, NextFunction} from "express";
 import { isNaN, method } from "lodash";
 import Joi from "joi";
+import { Gender } from "../enums";
 
-enum Gender{
-  MALE = 'MALE',
-  FEMALE = 'FEMALE'
-}
 
 const postSchema = Joi.object({
   firstName: Joi.string().min(3).max(25).required(),

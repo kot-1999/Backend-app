@@ -9,7 +9,6 @@ import {
   requestBodyValidationMiddleware
 } from "../../../middlewares/validationMiddlewares";
 
-
 const router = Router();
 
 export default () => {
