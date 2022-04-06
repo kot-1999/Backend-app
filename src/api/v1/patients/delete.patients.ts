@@ -1,5 +1,6 @@
 import { Request, Response} from "express";
 const fs = require('fs');
+import { models } from "../../../db";
 
 
 
@@ -10,32 +11,28 @@ export const workflow = (req: Request, res: Response) => {
   }] = JSON.parse(fs.readFileSync('./src/api/v1/patients/patients.json'))
 
   const patientID: number = parseInt(req.params.patientID)
-  for(let i:number = 0; i < patients.length; i++){
-    if(patientID == patients[i].id){
-      patients.splice(i, 1)
-      fs.writeFileSync('./src/api/v1/patients/patients.json', JSON.stringify(patients))
-      res.json({
-        "status": 200,
-        "messages": [
-          {
-            "message": `Patient ${patientID} was deleted`,
-            "type": "SUCCESS"
-          }
-        ]
-      })
-      return
-    }
+  try{
+    models.Patient.destroy({where: {id: patientID}})
+    res.json({
+      "status": 200,
+      "messages": [
+        {
+          "message": `Patient ${patientID} was deleted`,
+          "type": "SUCCESS"
+        }
+      ]
+    })
+  }catch (e){
+    res.json({
+      "status": 204,
+      "messages": [
+        {
+          "details": e.errors,
+          "type": "NO CONTENT"
+        }
+      ]
+    })
   }
-  res.json({
-    "status": 204,
-    "messages": [
-      {
-        "message": `Patient: ${patientID} was not found`,
-        "type": "NO CONTENT"
-      }
-    ]
-  })
-
 
 
 

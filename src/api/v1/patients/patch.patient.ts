@@ -1,50 +1,48 @@
 import { Request, Response} from "express";
-const fs = require('fs');
+import { models } from "../../../db";
+import { PatientModel } from "../../../db/models/patient_model";
 
-export const workflow = (req: Request, res: Response) => {
+export const workflow = async (req: Request, res: Response) => {
   /*
   * Updates existing patient
   * res: 200 if everything is ok
   * res: 204 if there is no such patient for updating
   * */
-  let patients: [any] = JSON.parse(fs.readFileSync('./src/api/v1/patients/patients.json'))
+
 
   const patientID: number = parseInt(req.params.patientID)
 
-  for(let i:number = 0; i < patients.length; i++){
-    if(patientID == patients[i].id){
-
-      for (let key in req.body) {
-        patients[i][key] = req.body[key];
-      }
-
-      fs.writeFileSync('./src/api/v1/patients/patients.json', JSON.stringify(patients))
-      res.json({
-        "status": 200,
-        "messages": [
-          {
-            "message": `Patient ${patientID} was patched`,
-            "type": "SUCCESS"
-          }
-        ],
-        "patient": {
-          "id": patientID
+  try{
+    const patient: PatientModel = await models.Patient.findOne({where: {id: patientID}})
+    for (let key in req.body) {
+      patient.set({[key]: req.body[key] })
+    }
+    await patient.save()
+    res.json({
+      "status": 200,
+      "messages": [
+        {
+          "message": `Patient ${patientID} was patched`,
+          "type": "SUCCESS"
         }
-      })
-      return
-    }
-  }
-
-  res.json({
-    "status": 204,
-    "messages": [
-      {
-        "message": `Patient: ${patientID} was not found`,
-        "type": "NO CONTENT"
+      ],
+      "patient": {
+        "id": patientID
       }
-    ],
-    "patient": {
-      "id": patientID
-    }
-  })
+    })
+  }
+  catch (e) {
+    res.json({
+      "status": 204,
+      "messages": [
+        {
+          "message": e.message,
+          "type": "FAIL"
+        }
+      ],
+      "patient": {
+        "id": patientID
+      }
+    });
+  }
 }

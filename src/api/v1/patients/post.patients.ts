@@ -1,35 +1,45 @@
 import { Request, Response} from "express";
+import { models } from "../../../db";
+
 const fs = require('fs');
 
 
 
-export const workflow = (req: Request, res: Response) => {
+export const workflow = async (req: Request, res: Response) => {
   /*
   * Add a new patient with automatically generated id
   * res: 200 if everything is ok
   * res: 204 if there is no such patient for updating
   * */
+  try {
+    const patient = await models.Patient.create(req.body);
 
-  let patients: [{
-    id: number
-  }] = JSON.parse(fs.readFileSync('./src/api/v1/patients/patients.json'))
+    if (patient) {
+      res.json({
+        "status": 200,
+        "messages": [
+          {
+            "message": "New patient was added",
+            "type": "SUCCESS"
+          }
+        ],
+        "patient": {
+          "id": patient.id
+        }
+      })
 
-
-  req.body.id = patients[patients.length-1].id + 1;
-  patients.push(req.body)
-  fs.writeFileSync('./src/api/v1/patients/patients.json', JSON.stringify(patients))
-
-
-  res.json({
-    "status": 200,
-    "messages": [
-      {
-        "message": "New patient was added",
-        "type": "SUCCESS"
-      }
-    ],
-    "patient": {
-      "id": req.body.id
     }
-  })
+  }catch (e){
+    res.json({
+      "status": 204,
+      "messages": [
+        {
+          "details": e.errors,
+          "type": "FAIL"
+        }
+      ]
+    })
+  }
+
+
 }

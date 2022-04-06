@@ -12,10 +12,10 @@ import {
 const router = Router();
 
 export default () => {
-  router.get('/', GetPatients.workflow);
+  router.get('/', GetPatients.get_all_patients);
   router.post('/', requestBodyValidationMiddleware(), PostPatients.workflow)
   router.delete('/:patientID', patientIdValidationMiddleware(), DeletePatients.workflow)
-  router.get('/:patientID', patientIdValidationMiddleware(), GetPatients.workflow2);
+  router.get('/:patientID', patientIdValidationMiddleware(), GetPatients.get_patient_by_id);
   router.patch('/:patientID', patientIdValidationMiddleware(), requestBodyValidationMiddleware(), PatchPatients.workflow);
   return router;
 }

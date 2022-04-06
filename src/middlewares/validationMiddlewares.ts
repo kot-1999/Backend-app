@@ -3,6 +3,16 @@ import { isNaN, method } from "lodash";
 import Joi from "joi";
 import { Gender } from "../enums";
 
+interface Patient{
+  firstName: string,
+  lastName: string,
+  birthdate: string,
+  weight: number,
+  height: number,
+  identificationNumber: string,
+  gender: Gender,
+  diagnoseID: number,
+}
 
 const postSchema = Joi.object({
   firstName: Joi.string().min(3).max(25).required(),
@@ -34,7 +44,6 @@ export const  requestBodyValidationMiddleware = () => {
   return(req: Request, res: Response, next: NextFunction) => {
     const { error, value } = (req.method === 'POST') ? postSchema.validate(req.body) : patchSchema.validate(req.body);
 
-    console.log(value)
     if (error !== undefined) {
       res.json({
         "status": 400,
@@ -58,7 +67,6 @@ export const  patientIdValidationMiddleware = () => {
   * */
   return(req: Request, res: Response, next: NextFunction) => {
     const patientID: number = parseInt(req.params.patientID);
-    console.log(patientID);
     if(isNaN(patientID) || patientID < 0 ){
       res.json({
         "status": 400,
