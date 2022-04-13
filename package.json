@@ -4,7 +4,8 @@
   "description": "Project lessons of backend internship program",
   "main": "src/index.ts",
   "scripts": {
-    "debug": "cross-env NODE_ENV=development nodemon --exec 'node --inspect -r dotenv/config -r ts-node/register src/index.ts'"
+    "debug": "cross-env NODE_ENV=development nodemon --exec 'node --trace-warnings --inspect -r dotenv/config -r ts-node/register src/index.ts'"
+
   },
   "author": "Miroslava Filčáková <miroslava.filcakova@goodrequest.com>",
   "license": "MIT",

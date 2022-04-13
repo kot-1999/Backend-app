@@ -1,5 +1,5 @@
 import {Request, Response, NextFunction} from "express";
-import { isNaN, method } from "lodash";
+import { isNaN } from "lodash";
 import Joi from "joi";
 import { Gender } from "../enums";
 
@@ -50,7 +50,7 @@ export const  requestBodyValidationMiddleware = () => {
         "messages": [
           {
             "message": error.message,
-            "type": "BAD REQUEST"
+            "type": "NOT VALID DATA"
           }
         ]
       });

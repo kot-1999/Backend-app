@@ -10,3 +10,8 @@ export enum TimeUnit{
   DAY = 'DAY'
 }
 
+export enum PersonType{
+  CHILD = 'CHILD',
+  ADULT = 'ADULT'
+}
+
