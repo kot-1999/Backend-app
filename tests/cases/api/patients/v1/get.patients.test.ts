@@ -4,7 +4,7 @@ import app from '../../../../../src/app'
 import { responseSchema, patientSchema } from './../../../../../src/api/v1/patients/get.patients'
 import { isNumber, isObject } from "lodash";
 
-const url = '/api/patients/v1'
+const url = '/api/v1/patients'
 
 describe(`[GET] ${url}`, () => {
   it('Response should return list of v1', async () => {

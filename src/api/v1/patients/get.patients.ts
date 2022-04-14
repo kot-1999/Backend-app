@@ -12,7 +12,7 @@ export const patientSchema = Joi.object({
   weight: Joi.number().min(0.2).max(200).required(),
   height: Joi.number().min(10).max(250).required(),
   identificationNumber: Joi.string().length(12).required(),
-  gender: Joi.valid(Gender.MALE, Gender.FEMALE).required(),
+  gender: Joi.string().valid(Gender.MALE, Gender.FEMALE).required(),
   diagnoseID: Joi.number().positive().required(),
   age: Joi.number().min(0).max(150).required(),
   personType: Joi.valid(PersonType.CHILD, PersonType.ADULT).required(),

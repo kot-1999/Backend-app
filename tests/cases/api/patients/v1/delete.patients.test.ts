@@ -6,7 +6,7 @@ import { Patient } from "../../../../../src/api/v1/patients/patch.patient";
 import { isNumber, isObject } from "lodash";
 import { number } from "joi";
 
-const url = '/api/patients/v1'
+const url = '/api/v1/patients'
 
 const patient: Patient = {
   "firstName": "Adriano",

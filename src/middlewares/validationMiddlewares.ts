@@ -62,7 +62,7 @@ export const  patientIdValidationMiddleware = () => {
 
 export const  getParamsValidationMiddleware = () => {
   return(req: Request, res: Response, next: NextFunction) => {
-    const allowedKeys = ['order', 'limit', 'page', 'sort']
+    const allowedKeys = ['order', 'limit', 'page', 'gender']
     for (let key in req.query) {
       if(!allowedKeys.includes(key)){
         return res.status(400).json({
