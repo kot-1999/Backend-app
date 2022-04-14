@@ -4,7 +4,7 @@ import PatientsRouter from './patients';
 const router = Router();
 
 export default () => {
-  router.use('/patients', PatientsRouter());
+  router.use('/v1', PatientsRouter());
 
   return router;
 }

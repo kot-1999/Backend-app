@@ -5,18 +5,15 @@ import { DiagnoseModel } from "../../../db/models/diagnose_model";
 
 export const workflow = async (req: Request, res: Response) => {
 
-  const {body, path, url} = req
-
-
+  const {body} = req
   const patientID: number = parseInt(req.params.patientID)
 
   try{
 
     const patient: PatientModel = await models.Patient.findOne({where: {id: patientID}})
-    // Check if patient exists
+    // Check if v1 exists
     if(!patient){
-      return res.json({
-        "status": 404,
+      return res.status(404).json({
         "messages": [
           {
             "details": `Patient: ${patientID} was not found`,
@@ -30,8 +27,7 @@ export const workflow = async (req: Request, res: Response) => {
     if(body.diagnoseID) {
       const diagnose: DiagnoseModel = await models.Diagnose.findOne({ where: { id: body.diagnoseID } });
       if (!diagnose) {
-        return res.json({
-          "status": 404,
+        return res.status(404).json({
           "messages": [
             {
               "details": `Diagnose: ${body.diagnoseID} was not found`,
@@ -42,15 +38,12 @@ export const workflow = async (req: Request, res: Response) => {
       }
     }
 
-
-
     for (let key in body) {
       patient.set({[key]: body[key] })
     }
 
     await patient.save()
-    return res.json({
-      "status": 200,
+    return res.status(200).json({
       "messages": [
         {
           "message": `Patient ${patientID} was patched`,
@@ -63,8 +56,7 @@ export const workflow = async (req: Request, res: Response) => {
     })
   }
   catch (e) {
-    return res.json({
-      "status": 400,
+    return res.status(400).json({
       "messages": [
         {
           "message": e.message,

@@ -1,7 +1,38 @@
 import { Request, Response } from "express";
 import { map, toNumber, toString } from "lodash";
 import { models } from "../../../db";
-import { PersonType } from "../../../enums";
+import { Gender, PersonType } from "../../../enums";
+import Joi from "joi";
+
+export const patientSchema = Joi.object({
+  id: Joi.number().integer().min(1).required(),
+  firstName: Joi.string().max(25).required(),
+  lastName: Joi.string().min(3).max(25).required(),
+  birthdate: Joi.date().required().required(),
+  weight: Joi.number().min(0.2).max(200).required(),
+  height: Joi.number().min(10).max(250).required(),
+  identificationNumber: Joi.string().length(12).required(),
+  gender: Joi.valid(Gender.MALE, Gender.FEMALE).required(),
+  diagnoseID: Joi.number().positive().required(),
+  age: Joi.number().min(0).max(150).required(),
+  personType: Joi.valid(PersonType.CHILD, PersonType.ADULT).required(),
+  diagnose: Joi.object({
+    id: Joi.number().integer().min(1).required(),
+    name: Joi.string().max(100).required(),
+    description: Joi.string().max(200).required(),
+    substance: Joi.object({
+      id: Joi.number().integer().min(1).required(),
+      name: Joi.string().max(100).required(),
+    }).required()
+  }).required()
+})
+
+export const responseSchema = Joi.object({
+  patients: Joi.array().items(patientSchema),
+  count: Joi.number()
+})
+
+
 
 
 function calculateAge(birthdate: string){
@@ -14,9 +45,9 @@ function calculateAge(birthdate: string){
 
 export const  get_all_patients = async (req: Request, res: Response) => {
   /*
-  * Returns the patient by patientID added to the path
+  * Returns the v1 by patientID added to the path
   * res: 200 if everything is ok
-  * res: 204 if there is no such patient
+  * res: 204 if there is no such v1
   * */
   let options: any = {
     attributes: ['id', 'firstName', 'lastName', 'birthdate', 'weight', 'height', 'identificationNumber', 'gender', 'diagnoseID'],
@@ -50,21 +81,21 @@ export const  get_all_patients = async (req: Request, res: Response) => {
 
 
   if(patients) {
-    return res.json({
-      "status": 200,
-      "patients": map(patients, (patient) => {
-        const age = calculateAge(patient.birthdate)
-        patient.setDataValue('age', age)
-        patient.setDataValue('personType', age > 18 ? PersonType.ADULT : PersonType.CHILD)
-        return patient
-      }),
-      "count": patients.length
-    });
+    return res.status(200).json(
+      {
+        "patients": map(patients, (patient) => {
+          const age = calculateAge(patient.birthdate)
+          patient.setDataValue('age', age)
+          patient.setDataValue('personType', age > 18 ? PersonType.ADULT : PersonType.CHILD)
+          return patient
+        }),
+        "count": patients.length
+      }
+    );
 
   }
 
-  return res.json({
-    "status": 404,
+  return res.status(400).json({
     "messages": [
       {
         "message": `No patients were found`,

@@ -5,6 +5,6 @@ const app = express();
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 
-app.use('/api/v1', v1());
+app.use('/api/patients', v1());
 
 export default app;

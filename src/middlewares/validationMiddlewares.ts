@@ -45,8 +45,7 @@ export const  requestBodyValidationMiddleware = () => {
     const { error, value } = (req.method === 'POST') ? postSchema.validate(req.body) : patchSchema.validate(req.body);
 
     if (error !== undefined) {
-      res.json({
-        "status": 400,
+      res.status(400).json({
         "messages": [
           {
             "message": error.message,
@@ -62,14 +61,10 @@ export const  requestBodyValidationMiddleware = () => {
 }
 
 export const  patientIdValidationMiddleware = () => {
-  /*
-  * Checks if patientID added to the path is correct
-  * */
   return(req: Request, res: Response, next: NextFunction) => {
     const patientID: number = parseInt(req.params.patientID);
     if(isNaN(patientID) || patientID < 0 ){
-      res.json({
-        "status": 400,
+      res.status(400).json({
         "messages": [
           {
             "message": `Wrong patientID: ${patientID}`,
@@ -83,4 +78,27 @@ export const  patientIdValidationMiddleware = () => {
   }
 }
 
-export default {requestBodyValidationMiddleware, patientIdValidationMiddleware};
+export const  getParamsValidationMiddleware = () => {
+  return(req: Request, res: Response, next: NextFunction) => {
+    console.log(req.query)
+    const allowedKeys = ['order', 'limit', 'page', 'sort']
+    for (let key in req.query) {
+      if(!allowedKeys.includes(key)){
+        return res.status(400).json({
+          "messages": [
+            {
+              "message": `Unexpected key: ${key}`,
+              "type": "BAD REQUEST"
+            }
+          ]
+        })
+      }
+    }
+
+
+    return next();
+
+  }
+}
+
+export default {requestBodyValidationMiddleware, patientIdValidationMiddleware, getParamsValidationMiddleware};

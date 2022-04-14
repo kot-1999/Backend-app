@@ -5,6 +5,7 @@ import * as DeletePatients from './delete.patients'
 import * as PatchPatients from './patch.patient'
 
 import {
+  getParamsValidationMiddleware,
   patientIdValidationMiddleware,
   requestBodyValidationMiddleware
 } from "../../../middlewares/validationMiddlewares";
@@ -12,7 +13,7 @@ import {
 const router = Router();
 
 export default () => {
-  router.get('/', GetPatients.get_all_patients);
+  router.get('/', getParamsValidationMiddleware(), GetPatients.get_all_patients);
   router.post('/', requestBodyValidationMiddleware(), PostPatients.workflow)
   router.delete('/:patientID', patientIdValidationMiddleware(), DeletePatients.workflow)
   router.get('/:patientID', patientIdValidationMiddleware(), GetPatients.get_patient_by_id);

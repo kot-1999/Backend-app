@@ -35,7 +35,7 @@ export const workflow = async (req: Request, res: Response) => {
         "status": 200,
         "messages": [
           {
-            "message": "New patient was added",
+            "message": "New v1 was added",
             "type": "SUCCESS"
           }
         ],
