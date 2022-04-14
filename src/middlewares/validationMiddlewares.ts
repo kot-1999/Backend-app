@@ -3,17 +3,6 @@ import { isNaN } from "lodash";
 import Joi from "joi";
 import { Gender } from "../enums";
 
-interface Patient{
-  firstName: string,
-  lastName: string,
-  birthdate: string,
-  weight: number,
-  height: number,
-  identificationNumber: string,
-  gender: Gender,
-  diagnoseID: number,
-}
-
 const postSchema = Joi.object({
   firstName: Joi.string().min(3).max(25).required(),
   lastName: Joi.string().min(3).max(25).required(),
@@ -38,20 +27,15 @@ const patchSchema = Joi.object({
 })
 
 export const  requestBodyValidationMiddleware = () => {
-  /*
-  * Checks all key parameters and their values
-  * */
   return(req: Request, res: Response, next: NextFunction) => {
     const { error, value } = (req.method === 'POST') ? postSchema.validate(req.body) : patchSchema.validate(req.body);
 
     if (error !== undefined) {
       res.status(400).json({
-        "messages": [
-          {
-            "message": error.message,
-            "type": "NOT VALID DATA"
-          }
-        ]
+        "messages": [{
+          "message": error.message,
+          "type": "NOT VALID DATA"
+        }]
       });
       return
     }
@@ -65,12 +49,10 @@ export const  patientIdValidationMiddleware = () => {
     const patientID: number = parseInt(req.params.patientID);
     if(isNaN(patientID) || patientID < 0 ){
       res.status(400).json({
-        "messages": [
-          {
-            "message": `Wrong patientID: ${patientID}`,
-            "type": "BAD REQUEST"
-          }
-        ]
+        "messages": [{
+          "message": `Wrong patientID: ${patientID}`,
+          "type": "BAD REQUEST"
+        }]
       })
     }else {
       return next();
@@ -80,22 +62,17 @@ export const  patientIdValidationMiddleware = () => {
 
 export const  getParamsValidationMiddleware = () => {
   return(req: Request, res: Response, next: NextFunction) => {
-    console.log(req.query)
     const allowedKeys = ['order', 'limit', 'page', 'sort']
     for (let key in req.query) {
       if(!allowedKeys.includes(key)){
         return res.status(400).json({
-          "messages": [
-            {
-              "message": `Unexpected key: ${key}`,
-              "type": "BAD REQUEST"
-            }
-          ]
+          "messages": [{
+            "message": `Unexpected key: ${key}`,
+            "type": "BAD REQUEST"
+          }]
         })
       }
     }
-
-
     return next();
 
   }

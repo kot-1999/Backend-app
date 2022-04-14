@@ -44,11 +44,6 @@ function calculateAge(birthdate: string){
 }
 
 export const  get_all_patients = async (req: Request, res: Response) => {
-  /*
-  * Returns the v1 by patientID added to the path
-  * res: 200 if everything is ok
-  * res: 204 if there is no such v1
-  * */
   let options: any = {
     attributes: ['id', 'firstName', 'lastName', 'birthdate', 'weight', 'height', 'identificationNumber', 'gender', 'diagnoseID'],
     include: [{
@@ -109,41 +104,37 @@ export const  get_all_patients = async (req: Request, res: Response) => {
 export const get_patient_by_id = async (req: Request, res: Response) => {
   const patientID: number = parseInt(req.params.patientID)
 
-  const [patient] = await Promise.all(
-    [
-      models.Patient.findOne({
-        attributes: ['id', 'firstName', 'lastName', 'birthdate', 'weight', 'height', 'identificationNumber', 'gender', 'diagnoseID'],
+  const patient = await
+    models.Patient.findOne({
+      attributes: ['id', 'firstName', 'lastName', 'birthdate', 'weight', 'height', 'identificationNumber', 'gender', 'diagnoseID'],
+      include: [{
+        model: models.Diagnose,
+        required: true,
+        attributes: ['id', 'name', 'description'],
         include: [{
-          model: models.Diagnose,
+          model: models.Substance,
           required: true,
-          attributes: ['id', 'name', 'description'],
-          include: [{
-            model: models.Substance,
-            required: true,
-            attributes: ['id', 'name'
-              // , 'timeUnit', 'halfLife'
-            ]
-          }]
-        }],
-        where: {id: patientID}
-      })
-    ]
+          attributes: ['id', 'name'
+            // , 'timeUnit', 'halfLife'
+          ]
+        }]
+      }],
+      where: {id: patientID}
+    }
   )
 
-  const age = calculateAge(patient.birthdate)
-  patient.setDataValue('age', age)
-  patient.setDataValue('personType', age > 18 ? PersonType.ADULT : PersonType.CHILD)
+
 
   if(patient) {
-    return res.json({
-      "status": 200,
+    const age = calculateAge(patient.birthdate)
+    patient.setDataValue('age', age)
+    patient.setDataValue('personType', age > 18 ? PersonType.ADULT : PersonType.CHILD)
+    return res.status(200).json({
       "patient": patient
     });
 
   }
-
-  return res.json({
-    "status": 404,
+  return res.status(404).json({
     "messages": [
       {
         "message": `Patient: ${patientID} was not found`,

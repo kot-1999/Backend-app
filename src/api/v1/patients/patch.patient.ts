@@ -2,12 +2,23 @@ import { Request, Response} from "express";
 import { models } from "../../../db";
 import { PatientModel } from "../../../db/models/patient_model";
 import { DiagnoseModel } from "../../../db/models/diagnose_model";
+import { Gender } from "../../../enums";
+
+export interface Patient{
+  firstName: string,
+  lastName: string,
+  birthdate: string,
+  weight: number,
+  height: number,
+  identificationNumber: string,
+  gender: Gender,
+  diagnoseID: number,
+}
 
 export const workflow = async (req: Request, res: Response) => {
 
   const {body} = req
   const patientID: number = parseInt(req.params.patientID)
-
   try{
 
     const patient: PatientModel = await models.Patient.findOne({where: {id: patientID}})

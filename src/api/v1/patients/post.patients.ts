@@ -17,8 +17,7 @@ export const workflow = async (req: Request, res: Response) => {
     const diagnose: DiagnoseModel = await models.Diagnose.findOne({where: {id: body.diagnoseID}})
 
     if(!diagnose){
-      return res.json({
-        "status": 404,
+      return res.status(404).json({
         "messages": [
           {
             "details": `Diagnose: ${body.diagnoseID} was not found`,
@@ -31,8 +30,7 @@ export const workflow = async (req: Request, res: Response) => {
     const patient = await models.Patient.create(req.body);
 
     if (patient) {
-      return res.json({
-        "status": 200,
+      return res.status(200).json({
         "messages": [
           {
             "message": "New v1 was added",
@@ -46,8 +44,7 @@ export const workflow = async (req: Request, res: Response) => {
 
     }
   }catch (e){
-    return res.json({
-      "status": 400,
+    return res.status(400).json({
       "messages": [
         {
           "details": e.errors,
