@@ -1,7 +1,7 @@
 import {Request, Response, NextFunction} from "express";
 import { isNaN } from "lodash";
 import Joi from "joi";
-import { Gender } from "../enums";
+import { Gender, PatientHeight, PatientWeight } from "../enums";
 
 const postSchema = Joi.object({
   firstName: Joi.string().min(3).max(25).required(),
@@ -18,8 +18,8 @@ const patchSchema = Joi.object({
   firstName: Joi.string().min(3).max(25),
   lastName: Joi.string().min(3).max(25),
   birthdate: Joi.date(),
-  weight: Joi.number().min(0.2).max(200),
-  height: Joi.number().min(10).max(250),
+  weight: Joi.number().min(PatientWeight.MIN).max(PatientWeight.MAX),
+  height: Joi.number().min(PatientHeight.MIN).max(PatientHeight.MAX),
   identificationNumber: Joi.string().length(12),
   gender: Joi.valid(Gender.MALE, Gender.FEMALE),
   diagnoseID: Joi.number().positive(),

@@ -41,6 +41,7 @@
   "dependencies": {
     "colors": "1.4.0",
     "config": "3.3.7",
+    "cors": "^2.8.5",
     "dayjs": "1.10.7",
     "express": "4.17.2",
     "joi": "17.4.2",
