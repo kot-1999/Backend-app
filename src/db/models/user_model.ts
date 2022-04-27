@@ -1,14 +1,16 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
 import { UserRole } from "../../enums";
-import Users from "../../api/v1/users";
-import { Models, models } from "../index";
+import { PatientModel } from "./patient_model";
+import { Models } from "../index";
+
 
 
 export class UserModel extends Model{
   id: number
   name: string
-  token: string
   role: string
+  patientID: number
+  patient: PatientModel
 }
 
 export default (sequelize: Sequelize, modelName: string) => {
@@ -25,13 +27,14 @@ export default (sequelize: Sequelize, modelName: string) => {
         type: DataTypes.TEXT,
         allowNull: false,
       },
-      token: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-      },
       role: {
         type: DataTypes.ENUM(UserRole.USER, UserRole.ADMIN, UserRole.SUPER_ADMIN),
         allowNull: false
+      },
+      patientID: {
+        type: DataTypes.BIGINT,
+        allowNull: false,
+        unique: true
       }
     },
     {
@@ -42,6 +45,10 @@ export default (sequelize: Sequelize, modelName: string) => {
       tableName: 'users'
     }
   );
+
+  // (UserModel as any).associate = (models: Models) => {
+  //   UserModel.belongsTo(models.Patient, { foreignKey: 'patientID' })
+  // }
 
   return UserModel
 }

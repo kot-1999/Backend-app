@@ -1,12 +1,11 @@
 import { Request, Response } from "express";
-import { map, toNumber, toString } from "lodash";
+import { toNumber, toString } from "lodash";
 import { models } from "../../../db";
-import { PersonType } from "../../../enums";
 
 
 export const get_all_users = async (req: Request, res: Response) => {
   let options: any = {
-    attributes: ['id', 'name', 'token', 'role', 'createdAt', 'updatedAt']
+    attributes: ['id', 'name', 'role', 'createdAt', 'updatedAt', 'patientID']
   }
   if(req.query.role)
     options.where = { role: req.query.role }
@@ -40,12 +39,13 @@ export const get_all_users = async (req: Request, res: Response) => {
   }
 }
 
+
 export const get_user_by_id = async (req: Request, res: Response) => {
   const userID: number = parseInt(req.params.userID)
 
   const user = await
     models.User.findOne({
-      attributes: ['id', 'name', 'token', 'role', 'createdAt', 'updatedAt'],
+      attributes: ['id', 'name', 'role', 'createdAt', 'updatedAt', 'patientID'],
       where: {id: userID}
       }
     )

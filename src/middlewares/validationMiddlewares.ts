@@ -1,5 +1,4 @@
 import {Request, Response, NextFunction} from "express";
-import { isNaN } from "lodash";
 import Joi from "joi";
 import { Gender, PatientHeight, PatientWeight, UserRole } from "../enums";
 
@@ -28,14 +27,14 @@ const patchPatientSchema = Joi.object({
 
 const postUserSchema = Joi.object({
   name: Joi.string().min(3).max(25).required(),
-  token: Joi.string().min(6).required(),
   role: Joi.valid(UserRole.USER, UserRole.ADMIN, UserRole.SUPER_ADMIN).required(),
+  patientID: Joi.number().positive().required(),
 })
 
 const patchUserSchema = Joi.object({
   name: Joi.string().min(3).max(25),
-  token: Joi.string().min(6),
   role: Joi.valid(UserRole.USER, UserRole.ADMIN, UserRole.SUPER_ADMIN),
+  patientID: Joi.number().positive(),
 })
 
 
@@ -72,25 +71,12 @@ export const  requestBodyValidationMiddleware = () => {
   }
 }
 
-export const  idValidationMiddleware = () => {
-  return(req: Request, res: Response, next: NextFunction) => {
-    const patientID: number = parseInt(req.params.patientID);
-    if(isNaN(patientID) || patientID < 0 ){
-      res.status(400).json({
-        "messages": [{
-          "message": `Wrong patientID: ${patientID}`,
-          "type": "BAD REQUEST"
-        }]
-      })
-    }else {
-      return next();
-    }
-  }
-}
-
 export const  getParamsValidationMiddleware = () => {
   return(req: Request, res: Response, next: NextFunction) => {
-    const allowedKeys = ['order', 'limit', 'page', 'gender']
+    const splintedUrl = req.baseUrl.split('/')
+
+
+    const allowedKeys = splintedUrl.includes('patients') ? ['order', 'limit', 'page', 'gender', 'token'] : ['order', 'limit', 'page', 'role', 'token']
 
 
     for (let key in req.query) {
@@ -108,4 +94,4 @@ export const  getParamsValidationMiddleware = () => {
   }
 }
 
-export default {requestBodyValidationMiddleware, patientIdValidationMiddleware: idValidationMiddleware, getParamsValidationMiddleware};
+export default {requestBodyValidationMiddleware, getParamsValidationMiddleware};

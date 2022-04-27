@@ -58,7 +58,7 @@ export default (sequelize: Sequelize, modelName: string) => {
         allowNull: false,
       },
       diagnoseID: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.BIGINT,
         allowNull: false
       }
     },
@@ -73,6 +73,7 @@ export default (sequelize: Sequelize, modelName: string) => {
 
   (PatientModel as any).associate = (models: Models) => {
     PatientModel.belongsTo(models.Diagnose, { foreignKey: 'diagnoseID' })
+    PatientModel.hasOne(models.User, { foreignKey: 'patientID' })
   }
 
   return PatientModel
