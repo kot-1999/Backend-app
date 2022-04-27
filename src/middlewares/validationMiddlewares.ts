@@ -1,9 +1,9 @@
 import {Request, Response, NextFunction} from "express";
 import { isNaN } from "lodash";
 import Joi from "joi";
-import { Gender, PatientHeight, PatientWeight } from "../enums";
+import { Gender, PatientHeight, PatientWeight, UserRole } from "../enums";
 
-const postSchema = Joi.object({
+const postPatientSchema = Joi.object({
   firstName: Joi.string().min(3).max(25).required(),
   lastName: Joi.string().min(3).max(25).required(),
   birthdate: Joi.date().required(),
@@ -14,7 +14,7 @@ const postSchema = Joi.object({
   diagnoseID: Joi.number().positive().required(),
 })
 
-const patchSchema = Joi.object({
+const patchPatientSchema = Joi.object({
   firstName: Joi.string().min(3).max(25),
   lastName: Joi.string().min(3).max(25),
   birthdate: Joi.date(),
@@ -26,25 +26,53 @@ const patchSchema = Joi.object({
 
 })
 
+const postUserSchema = Joi.object({
+  name: Joi.string().min(3).max(25).required(),
+  token: Joi.string().min(6).required(),
+  role: Joi.valid(UserRole.USER, UserRole.ADMIN, UserRole.SUPER_ADMIN).required(),
+})
+
+const patchUserSchema = Joi.object({
+  name: Joi.string().min(3).max(25),
+  token: Joi.string().min(6),
+  role: Joi.valid(UserRole.USER, UserRole.ADMIN, UserRole.SUPER_ADMIN),
+})
+
+
+
 export const  requestBodyValidationMiddleware = () => {
   return(req: Request, res: Response, next: NextFunction) => {
-    const { error, value } = (req.method === 'POST') ? postSchema.validate(req.body) : patchSchema.validate(req.body);
 
-    if (error !== undefined) {
-      res.status(400).json({
-        "messages": [{
-          "message": error.message,
-          "type": "NOT VALID DATA"
-        }]
-      });
-      return
+    const splintedUrl = req.baseUrl.split('/')
+
+
+    console.log(splintedUrl,req)
+    if(req.method === 'POST'){
+      const {error} = (splintedUrl.includes('patients')) ? postPatientSchema.validate(req.body) : postUserSchema.validate(req.body)
+      if (error)
+        return res.status(400).json({
+          "messages": [{
+            "message": error.message,
+            "type": "NOT VALID DATA"
+          }]
+        })
+    }else if(req.method === 'PATCH'){
+      const {error} = (splintedUrl.includes('patients')) ? patchPatientSchema.validate(req.body) : patchUserSchema.validate(req.body)
+      if (error)
+        return res.status(400).json({
+          "messages": [{
+            "message": error.message,
+            "type": "NOT VALID DATA"
+          }]
+        })
     }
+
 
     return next();
   }
 }
 
-export const  patientIdValidationMiddleware = () => {
+export const  idValidationMiddleware = () => {
   return(req: Request, res: Response, next: NextFunction) => {
     const patientID: number = parseInt(req.params.patientID);
     if(isNaN(patientID) || patientID < 0 ){
@@ -63,6 +91,8 @@ export const  patientIdValidationMiddleware = () => {
 export const  getParamsValidationMiddleware = () => {
   return(req: Request, res: Response, next: NextFunction) => {
     const allowedKeys = ['order', 'limit', 'page', 'gender']
+
+
     for (let key in req.query) {
       if(!allowedKeys.includes(key)){
         return res.status(400).json({
@@ -78,4 +108,4 @@ export const  getParamsValidationMiddleware = () => {
   }
 }
 
-export default {requestBodyValidationMiddleware, patientIdValidationMiddleware, getParamsValidationMiddleware};
+export default {requestBodyValidationMiddleware, patientIdValidationMiddleware: idValidationMiddleware, getParamsValidationMiddleware};

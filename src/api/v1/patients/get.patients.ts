@@ -114,8 +114,7 @@ export const get_patient_by_id = async (req: Request, res: Response) => {
         include: [{
           model: models.Substance,
           required: true,
-          attributes: ['id', 'name'
-            // , 'timeUnit', 'halfLife'
+          attributes: ['id', 'name', 'timeUnit', 'halfLife'
           ]
         }]
       }],

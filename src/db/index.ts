@@ -4,7 +4,7 @@ import { forEach } from "lodash";
 import defineSubstance from './models/substance_model'
 import definePatient from './models/patient_model'
 import defineDiagnose from './models/diagnose_model'
-
+import defineUser from './models/user_model'
 
 const env = process.env.NODE_ENV
 const { url, options } = (database as any)[env]
@@ -19,7 +19,8 @@ sequelize
 const modelsBuilder = (instance: Sequelize) => ({
   Substance: defineSubstance(instance, 'substance'),
   Diagnose: defineDiagnose(instance, 'diagnose'),
-  Patient: definePatient(instance, 'patient')
+  Patient: definePatient(instance, 'patient'),
+  User: defineUser(instance, 'user')
 })
 
 

@@ -32,7 +32,7 @@ export default (sequelize: Sequelize, modelName: string) => {
         allowNull: false,
       },
       halfLife: {
-        type: DataTypes.DOUBLE,
+        type: DataTypes.FLOAT,
         allowNull: false,
       },
     },
@@ -41,7 +41,7 @@ export default (sequelize: Sequelize, modelName: string) => {
       timestamps: false,
       sequelize,
       modelName,
-      tableName: 'diagnoses',
+      tableName: 'substances',
     }
   );
 

@@ -27,13 +27,13 @@ export const workflow = async (req: Request, res: Response) => {
       })
     }
 
-    const patient = await models.Patient.create(req.body);
+    const patient = await models.Patient.create(body);
 
     if (patient) {
       return res.status(200).json({
         "messages": [
           {
-            "message": "New v1 was added",
+            "message": "New patient was added",
             "type": "SUCCESS"
           }
         ],

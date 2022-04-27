@@ -30,3 +30,9 @@ export enum SubstanceAmount{
   CHILDREN_MAX = 120,
   MIN = 20
 }
+
+export enum UserRole{
+  USER = 'USER',
+  ADMIN = 'ADMIN',
+  SUPER_ADMIN = 'SUPER_ADMIN'
+}
